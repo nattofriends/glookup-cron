@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+
+DEPLOY_FILE=glookup.deploy
+AHA_FILE=aha/aha
+CLASS=$1
+
+# Where am I?
+cd `readlink -f ${0%/*}`
+
+. ./glookup.settings
+
+# Okay, redeploy the file
+sftp -q $CLASS -b <<EOF
+put $DEPLOY_FILE
+put $AHA_FILE
+EOF
+
+# Now run
+ssh -t $CLASS <<EOF | mutt -e 'set content_type="text/html"; set realname="glookup checker"' $EMAIL -s "[$CLASS] glookup"
+"\$HOME/$DEPLOY_FILE"
+EOF
+
+

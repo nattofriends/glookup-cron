@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+# Lost my $PATH
+GLOOKUP=/share/b/grading/bin/glookup
+
+[[ ! -f .glookup.save ]] && touch .glookup.save
+
+$GLOOKUP > .glookup.tmp
+$GLOOKUP -s Total >> .glookup.tmp
+git diff --no-index --color=always .glookup.save .glookup.tmp | ./aha
+mv .glookup.tmp .glookup.save
